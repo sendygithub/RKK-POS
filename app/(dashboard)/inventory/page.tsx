@@ -10,23 +10,12 @@ import {
   BadgeDollarSign,
   BookMarkedIcon,
   CopyPlusIcon,
-  SpellCheck,
-  Trash2,
-  SquarePenIcon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import Inventory from "./inventory";
 
 const reset = {
   sku: "",
@@ -81,6 +70,7 @@ export default function InventoryPage() {
     if (res.ok) {
       setFormData(reset);
       setShowAdd(false);
+      window.location.reload();
     }
   };
 
@@ -118,51 +108,7 @@ export default function InventoryPage() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Nama Produk</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead>Kategori</TableHead>
-                <TableHead>Stok</TableHead>
-                <TableHead>Harga Pokok</TableHead>
-                <TableHead>Harga Jual</TableHead>
-                <TableHead>Deskripsi</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium text-[#1F2937]">
-                  001
-                </TableCell>
-                <TableCell className="text-[hsl(var(--muted-foreground))]">
-                  pakan kiucing
-                </TableCell>
-                <TableCell>
-                  <Badge className="rounded-full">12</Badge>
-                  <span className="ml-2 text-sm tabular-nums">unit</span>
-                </TableCell>
-                <TableCell className="font-medium">kuicing</TableCell>
-                <TableCell className="font-medium">stok</TableCell>
-                <TableCell className="font-medium">Rp.50.000</TableCell>
-                <TableCell className="font-medium">Rp.59.000</TableCell>
-                <TableCell className=" font-medium">pakan kucing</TableCell>
-                <TableCell className="font-medium text-[#1F2937]">
-                  <Button className="bg-transparent">
-                    <SquarePenIcon className="size=16 bg-orange-500" />
-                  </Button>
-                  <Button className="bg-transparent">
-                    <Trash2 className="size=16 bg-orange-500" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
+        <Inventory />
       </Card>
 
       {showAdd && (

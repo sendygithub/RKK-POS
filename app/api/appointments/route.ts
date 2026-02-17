@@ -29,3 +29,18 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const dataappointmen = await prisma.appointment.findMany({
+      orderBy: { id: "asc" },
+    });
+
+    return NextResponse.json(dataappointmen);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Failed to fetch appointment" },
+      { status: 500 },
+    );
+  }
+}

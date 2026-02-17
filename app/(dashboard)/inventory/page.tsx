@@ -28,22 +28,23 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 
+const reset = {
+  sku: "",
+  name: "",
+  brand: "",
+  stok: 0,
+  hargapokok: 0,
+  hargajual: 0,
+  kategori: "anjing",
+  imageUrl: "",
+  deskripsi: "",
+};
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
 
   //1. buat state untuk inisiasi data
-  const [formData, setFormData] = useState({
-    sku: "",
-    name: "",
-    brand: "",
-    stok: 0,
-    hargapokok: 0,
-    hargajual: 0,
-    kategori: "anjing",
-    imageUrl: "",
-    deskripsi: "",
-  });
+  const [formData, setFormData] = useState(reset);
 
   //2. buat fungsi untuk menangani perubahan input secara dinamis
   const handleChange = (
@@ -69,7 +70,7 @@ export default function InventoryPage() {
   //3. buat fungsi untuk tombol simpan
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch("/api/product", {
+    const res = await fetch("/api/product", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +78,10 @@ export default function InventoryPage() {
       body: JSON.stringify(formData),
     });
 
-    setShowAdd(false);
+    if (res.ok) {
+      setFormData(reset);
+      setShowAdd(false);
+    }
   };
 
   return (
@@ -113,6 +117,7 @@ export default function InventoryPage() {
             </Button>
           </div>
         </CardHeader>
+
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -314,12 +319,12 @@ export default function InventoryPage() {
                 <div className="space-y-2">
                   <Label htmlFor="deskripsi">Deskripsi</Label>
                   <div className="relative">
-                    <SpellCheck className="absolute left-3 top-3 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                     <textarea
                       id="deskripsi"
+                      placeholder="masukan alamat"
                       value={formData.deskripsi}
                       onChange={handleChange}
-                      className="min-h-[120px] rounded-xl pl-9 pt-2.5"
+                      className="min-h-[100px] rounded-xl pl-11"
                     />
                   </div>
                 </div>

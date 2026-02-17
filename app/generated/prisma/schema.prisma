@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id         Int     @id @default(autoincrement())
+  sku        Int     @unique
+  name       String?
+  brand      String
+  stok       Int
+  hargapokok Int
+  hargajual  Int
+  kategori   String
+  imageUrl   String
+  deskripsi  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  namaPemilik String
+  namaHewan   String
+  ras         String
+  layanan     String
+  date        DateTime
+  time        String
+  telfon      String
+  alamat      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

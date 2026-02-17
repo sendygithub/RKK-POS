@@ -77,9 +77,53 @@ const MOCK_APPOINTMENTS = [
   },
 ];
 
+const reset = {
+  namaPemilik: "",
+  namaHewan: "",
+  ras: "",
+  layanan: "",
+  date: "",
+  time: "",
+  telfon: "",
+  alamat: "",
+};
+
 export default function AppointmentsPage() {
   const [tampil, setTampil] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(reset);
+
+  //2. buat fungsi untuk menangani perubahan input secara dinamis
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { id, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+
+      [id]: value,
+    }));
+    console.log(id, value);
+  };
+
+  //3. buat fungsi untuk tombol simpan
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const res = await fetch("/api/appointments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (res.ok) {
+      setFormData(reset);
+      setTampil(false);
+    }
+  };
 
   return (
     <div>
@@ -185,14 +229,16 @@ export default function AppointmentsPage() {
             <CardContent className="pt-6">
               {/* 4. tambahkan onsubmit=handlesubmit */}
 
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="namapemilik">Nama Pemilik</Label>
+                    <Label htmlFor="namaPemilik">Nama Pemilik</Label>
                     <div className="relative">
                       <Input
-                        id="namapemilik"
+                        id="namaPemilik"
                         placeholder="Nama pemilik"
+                        value={formData.namaPemilik}
+                        onChange={handleChange}
                         className="rounded-xl pl-9"
                         required
                       />
@@ -201,10 +247,12 @@ export default function AppointmentsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="namahewan">Nama Hewan</Label>
+                    <Label htmlFor="namaHewan">Nama Hewan</Label>
                     <div className="relative">
                       <Input
-                        id="namahewan"
+                        id="namaHewan"
+                        value={formData.namaHewan}
+                        onChange={handleChange}
                         placeholder="Nama Hewan"
                         className="rounded-xl pl-9"
                         required
@@ -216,10 +264,12 @@ export default function AppointmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="brand">Ras/Jenis</Label>
+                    <Label htmlFor="ras">Ras/Jenis</Label>
                     <div className="relative">
                       <Input
-                        id="brand"
+                        id="ras"
+                        value={formData.ras}
+                        onChange={handleChange}
                         placeholder="Persian/Golden Ret.."
                         className="rounded-xl pl-9"
                         required
@@ -229,28 +279,30 @@ export default function AppointmentsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="stok">No. Telf</Label>
-                    <div className="relative">
-                      <CopyPlusIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
-                      <Input
-                        id="stok"
-                        type="number"
-                        placeholder="+628.."
-                        className="rounded-xl pl-9"
-                        required
-                      />
-                    </div>
+                    <Label>jenis layanan</Label>
+                    <select
+                      className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                      id="layanan"
+                      value={formData.layanan}
+                      onChange={handleChange}
+                    >
+                      <option value="Cukur">Cukur</option>
+                      <option value="Grooming">Grooming</option>
+                      <option value="Steril">Steril</option>
+                    </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="hargapokok">Hari & Tanggal</Label>
+                    <Label htmlFor="date">Hari & Tanggal</Label>
                     <div className="relative">
                       <CalendarClock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
                       <Input
-                        id="hargapokok"
-                        type="number"
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={handleChange}
                         placeholder="Senin, 2 Maret"
                         className="rounded-xl pl-9"
                         required
@@ -258,12 +310,14 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="hargajual">Jam</Label>
+                    <Label htmlFor="time">Jam</Label>
                     <div className="relative">
                       <Clock1 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
                       <Input
-                        id="hargajual"
-                        type="number"
+                        id="time"
+                        type="time"
+                        value={formData.time}
+                        onChange={handleChange}
                         placeholder="09:0 wib"
                         className="rounded-xl pl-9"
                         required
@@ -274,42 +328,32 @@ export default function AppointmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>jenis layanan</Label>
-                    <select
-                      className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
-                      id="kategori"
-                    >
-                      <option value="Cukur">Cukur</option>
-                      <option value="Grooming">Grooming</option>
-                      <option value="Steril">Steril</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Image Upload</Label>
+                    <Label htmlFor="telfon">No. Telf</Label>
                     <div className="relative">
-                      <input
-                        type="file"
-                        id="imageUrl"
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            imageUrl: e.target.files?.[0]?.name || "",
-                          }))
-                        }
-                        className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                      <CopyPlusIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
+                      <Input
+                        id="telfon"
+                        type="text"
+                        value={formData.telfon}
+                        onChange={handleChange}
+                        placeholder="+628.."
+                        className="rounded-xl pl-9"
+                        required
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="deskripsi">Catatan</Label>
-                  <div className="relative">
-                    <SpellCheck className="absolute left-3 top-3 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
-                    <textarea
-                      id="deskripsi"
-                      className="min-h-[120px] rounded-xl pl-9 pt-2.5"
-                    />
+                  <div className="space-y-2">
+                    <Label>Alamat</Label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="alamat"
+                        value={formData.alamat}
+                        onChange={handleChange}
+                        placeholder="jln. Merdeka.."
+                        className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                      />
+                    </div>
                   </div>
                 </div>
 

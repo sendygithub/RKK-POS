@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Shield,
+  UserCog,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,8 @@ const navItems = [
   { href: "/pos", label: "POS", icon: ShoppingBag },
   { href: "/inventory", label: "Inventori", icon: Package },
   { href: "/appointments", label: "Janji Grooming", icon: Dog },
+
+  { href: "/customer", label: "Customer", icon: UserCog },
   { href: "/settings", label: "Pengaturan", icon: Settings },
 ];
 
@@ -53,7 +56,7 @@ export function AppSidebar() {
         className={cn(
           "glass fixed left-0 top-0 z-50 h-screen w-64 rounded-r-2xl border-r border-[var(--glass-border)] shadow-glass transition-transform duration-200 ease-out",
           "lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex h-full flex-col">
@@ -88,7 +91,7 @@ export function AppSidebar() {
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-[#F97316]/10 text-[#F97316]"
-                      : "text-[#1F2937]/80 hover:bg-white/60 hover:text-[#1F2937]"
+                      : "text-[#1F2937]/80 hover:bg-white/60 hover:text-[#1F2937]",
                   )}
                 >
                   <Icon className="h-5 w-5 shrink-0" />
@@ -104,7 +107,7 @@ export function AppSidebar() {
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                   pathname === "/admin"
                     ? "bg-[#F97316]/10 text-[#F97316]"
-                    : "text-[#1F2937]/80 hover:bg-white/60 hover:text-[#1F2937]"
+                    : "text-[#1F2937]/80 hover:bg-white/60 hover:text-[#1F2937]",
                 )}
               >
                 <Shield className="h-5 w-5 shrink-0" />

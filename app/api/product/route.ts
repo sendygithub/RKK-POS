@@ -5,18 +5,19 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const newProduct = await prisma.product.create({
-      data: {
-        sku: Number(body.sku),
-        name: body.name,
-        brand: body.brand,
-        stok: Number(body.stok),
-        hargapokok: Number(body.hargapokok),
-        hargajual: Number(body.hargajual),
-        kategori: body.kategori,
-        imageUrl: body.imageUrl,
-        deskripsi: body.deskripsi,
-      },
+    const newProduct = await prisma.product.createMany({
+      data: body,
+      // {
+      //   sku: Number(body.sku),
+      //   name: body.name,
+      //   brand: body.brand,
+      //   stok: Number(body.stok),
+      //   hargapokok: Number(body.hargapokok),
+      //   hargajual: Number(body.hargajual),
+      //   kategori: body.kategori,
+      //   imageUrl: body.imageUrl,
+      //   deskripsi: body.deskripsi,
+      // },
     });
     return NextResponse.json({ message: "berhasil", data: newProduct });
   } catch (error) {

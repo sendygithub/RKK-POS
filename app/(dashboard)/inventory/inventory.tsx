@@ -63,28 +63,30 @@ export default function Inventory() {
                   {product.name}
                 </TableCell>
                 <TableCell>
-                  <Badge className="rounded-full">{product.stok}</Badge>
-                  <span className="ml-2 text-sm tabular-nums">unit</span>
+                  <Badge className="rounded-full">{product.brand}</Badge>
                 </TableCell>
-                <TableCell className="font-medium">{product.brand}</TableCell>
                 <TableCell className="font-medium">
-                  {product.hargajual}
+                  {product.kategori}
+                </TableCell>
+                <TableCell className="font-medium">
+                  {product.stok}
+                  <span className="ml-2 text-sm tabular-nums">unit</span>
                 </TableCell>
                 <TableCell className="font-medium">
                   {product.hargapokok}
                 </TableCell>
                 <TableCell className="font-medium">
-                  {product.deskripsi}
+                  {product.hargajual}
                 </TableCell>
                 <TableCell className=" font-medium">
-                  {product.kategori}
+                  {product.deskripsi}
                 </TableCell>
                 <TableCell className="font-medium text-[#1F2937]">
-                  <Button className="bg-transparent">
-                    <SquarePenIcon className="size=16 bg-orange-500" />
+                  <Button>
+                    <SquarePenIcon className="size=16" />
                   </Button>
-                  <Button className="bg-transparent">
-                    <Trash2 className="size=16 bg-orange-500" />
+                  <Button>
+                    <Trash2 className="size=16" />
                   </Button>
                 </TableCell>
               </TableRow>

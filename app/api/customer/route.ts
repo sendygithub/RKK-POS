@@ -8,10 +8,10 @@ export async function POST(request: Request) {
     const { namaPemilik, namaHewan, ras, layanan, date, time, telfon, alamat } =
       body;
 
-    const newAppointments = await prisma.appointment.createMany({
+    const newCustomer = await prisma.customer.createMany({
       data: body,
     });
-    return NextResponse.json({ message: "berhasil", data: newAppointments });
+    return NextResponse.json({ message: "berhasil", data: newCustomer });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -23,11 +23,11 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const dataappointmen = await prisma.appointment.findMany({
+    const dataCustomer = await prisma.customer.findMany({
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json(dataappointmen);
+    return NextResponse.json(dataCustomer);
   } catch (error) {
     return NextResponse.json(
       { message: "Failed to fetch appointment" },

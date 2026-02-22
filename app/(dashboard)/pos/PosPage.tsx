@@ -146,22 +146,57 @@ export default function POSPage({ products }: POSPageProps) {
           ))}
         </div>
 
-        <div className="grid flex-1 gap-3 overflow-auto rounded-2xl sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid flex-1 gap-2 overflow-auto p-7 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filteredProducts.map((product) => (
             <Card
               key={product.id}
-              className="glass-card cursor-pointer overflow-hidden rounded-2xl border-0 transition-shadow hover:shadow-glass-lg"
+              className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white p-4 transition-all duration-200 hover:border-orange-500 hover:shadow-md active:scale-95"
               onClick={() => addToCart(product)}
             >
-              <CardContent className="p-4">
-                <p className="font-medium text-[#1F2937]">{product.name}</p>
-                <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                  {product.kategori}
-                </p>
-                <p className="mt-2 text-lg font-semibold text-[#F97316]">
-                  Rp {(product.hargajual * 15000).toLocaleString("id-ID")}
-                </p>
-              </CardContent>
+              <div className="flex flex-col h-full justify-between gap-1">
+                {/* Header: Nama & Kategori */}
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    {product.kategori}
+                  </span>
+                  <h3 className="text-base font-semibold text-slate-800 line-clamp-2 mt-0.5 group-hover:text-orange-600">
+                    {product.name}
+                  </h3>
+                </div>
+
+                {/* Footer: Harga & Indikator */}
+                <div className="flex items-end justify-between border-t border-slate-50 pt-0">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      Harga
+                    </span>
+                    <span className="text-lg font-bold text-slate-900">
+                      <span className="text-sm font-normal text-slate-500 mr-0.5">
+                        Rp
+                      </span>
+                      {(product.hargajual * 15000).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+
+                  {/* Tombol Tambah Kecil di Pojok */}
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="M12 5v14" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </Card>
           ))}
         </div>

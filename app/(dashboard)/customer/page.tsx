@@ -108,6 +108,7 @@ export default function CustomerPage() {
                 <TableHead>Alamat</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {loading ? (
                 <TableRow>

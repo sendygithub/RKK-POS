@@ -14,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 type CustomerRow = {
   id: number;
@@ -21,6 +23,12 @@ type CustomerRow = {
   phone: string;
   email?: string | null;
   address?: string | null;
+  appointment: any[];
+};
+
+type Appointment = {
+  id: number;
+  date: Date; // sesuaikan dengan schema
 };
 
 // Inisialisasi data kosong untuk reset form
@@ -29,6 +37,7 @@ const initialFormState = {
   phone: "",
   email: "",
   address: "",
+  appointment: "",
 };
 
 export default function CustomerPage() {
@@ -106,6 +115,8 @@ export default function CustomerPage() {
                 <TableHead>Telepon</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Alamat</TableHead>
+                <TableHead>Appointment</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -125,6 +136,21 @@ export default function CustomerPage() {
                     <TableCell>{customer.phone}</TableCell>
                     <TableCell>{customer.email || "-"}</TableCell>
                     <TableCell>{customer.address || "-"}</TableCell>
+                    <TableCell>
+                      {customer.appointment?.length
+                        ? customer.appointment
+                            .map((a) =>
+                              format(new Date(a.date), "dd MMM yyyy", {
+                                locale: id,
+                              }),
+                            )
+                            .join(", ")
+                        : "-"}
+                    </TableCell>
+                    <TableCell>
+                      <Button>Edit</Button>
+                      <Button>Hapus</Button>
+                    </TableCell>
                   </TableRow>
                 ))
               )}

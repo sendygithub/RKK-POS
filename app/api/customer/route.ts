@@ -25,6 +25,9 @@ export async function GET() {
   try {
     const dataCustomer = await prisma.customer.findMany({
       orderBy: { id: "asc" },
+      include: {
+        appointments: true,
+      },
     });
 
     return NextResponse.json(dataCustomer);

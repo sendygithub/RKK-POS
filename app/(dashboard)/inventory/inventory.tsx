@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 type Product = {
   id: number;
@@ -82,9 +83,12 @@ export default function Inventory() {
                   {product.deskripsi}
                 </TableCell>
                 <TableCell className="font-medium text-[#1F2937]">
-                  <Button>
-                    <SquarePenIcon className="size=16" />
-                  </Button>
+                  <Link href={`/inventory/${product.id}/edit`}>
+                    <Button>
+                      <SquarePenIcon className="size=16" />
+                    </Button>
+                  </Link>
+
                   <Button>
                     <Trash2 className="size=16" />
                   </Button>

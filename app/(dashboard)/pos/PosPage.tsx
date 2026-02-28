@@ -84,6 +84,9 @@ export default function POSPage({ products }: POSPageProps) {
     );
   };
 
+  const formatPrice = (price: number) =>
+    `Rp ${(price * 15000).toLocaleString("id-ID")}`;
+
   const removeFromCart = (productId: number) => {
     setCart((prev) => prev.filter((i) => i.product.id !== productId));
   };
@@ -152,51 +155,51 @@ export default function POSPage({ products }: POSPageProps) {
           {filteredProducts.map((product) => (
             <Card
               key={product.id}
-              className="group flex flex-col h-fit cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white p-3 transition-all duration-200 hover:border-orange-500 hover:shadow-lg active:scale-[0.98]"
+              className={cn(
+                "group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white",
+                "transition-all duration-200 hover:border-orange-400 hover:shadow-md active:scale-[0.98]",
+              )}
               onClick={() => addToCart(product)}
             >
-              {/* IMAGE SECTION - Perbaikan pada Aspect Ratio */}
-              <div className="relative w-full before:block before:pb-[100%] overflow-hidden rounded-lg bg-slate-50">
+              {/* Gambar */}
+              <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
                 {product.imageUrl ? (
                   <Image
                     src={product.imageUrl}
-                    alt={product.name ?? "Product Image"}
+                    alt={product.name ?? "Produk"}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    className="absolute inset-0 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                    priority={true}
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                    priority={filteredProducts.length < 12}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400">
-                    <Dog className="w-8 h-8 mb-1 opacity-20" />
-                    <span className="text-[10px] font-medium">No Image</span>
+                  <div className="flex h-full flex-col items-center justify-center text-slate-400">
+                    <Dog className="h-10 w-10 opacity-30" />
+                    <span className="mt-2 text-xs">No Image</span>
                   </div>
                 )}
               </div>
 
-              {/* Info Produk */}
-              <div className="mt-3 flex flex-col gap-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-orange-500/80">
+              {/* Info */}
+              <div className="flex flex-1 flex-col p-3">
+                <span className="text-xs font-bold uppercase tracking-wide text-orange-600/80">
                   {product.kategori}
                 </span>
-                <h3 className="text-sm font-semibold text-slate-800 line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-orange-600">
-                  {product.name}
+
+                <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-tight text-slate-800 group-hover:text-orange-600">
+                  {product.name || "Produk Tanpa Nama"}
                 </h3>
-              </div>
 
-              {/* Harga & Button */}
-              <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-50">
-                <div className="flex flex-col">
-                  <span className="text-lg font-extrabold text-slate-900">
-                    <span className="text-xs font-medium text-slate-500 mr-0.5">
-                      Rp
+                <div className="mt-auto flex items-end justify-between pt-3">
+                  <div>
+                    <span className="text-lg font-extrabold text-slate-900">
+                      {formatPrice(product.hargajual)}
                     </span>
-                    {(product.hargajual * 15000).toLocaleString("id-ID")}
-                  </span>
-                </div>
+                  </div>
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
-                  <Plus className="h-5 w-5" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 transition-colors group-hover:bg-orange-500 group-hover:text-white">
+                    <Plus className="h-5 w-5" />
+                  </div>
                 </div>
               </div>
             </Card>

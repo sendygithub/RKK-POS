@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs"; // Opsional: Jalankan 'npm install bcryptjs'
+export const dynamic = "force-dynamic";
 
-const prisma = new PrismaClient();
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // Gunakan ini
+import bcrypt from "bcryptjs"; // Opsional: Jalankan 'npm install bcryptjs'
 
 // ==========================================
 // 1. POST: Membuat Admin Baru

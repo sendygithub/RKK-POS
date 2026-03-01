@@ -1,23 +1,23 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { Users } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users } from "lucide-react";
+import React from "react";
+import { useState, useEffect } from "react";
+import CustomerPage from "../customer/customer";
+import AdminPage from "./page";
 
-// Sesuai dengan Model Prisma Customer
-type CustomerRow = {
+type AdminRow = {
   id: number;
   name: string;
   phone: string;
   email?: string | null;
   address?: string | null;
 };
-
-export default function CustomerPage() {
-  const [data, setData] = useState<CustomerRow[]>([]);
+export default function adminPage() {
+  const [data, setData] = useState<AdminRow[]>([]);
 
   useEffect(() => {
-    fetch("/api/customer")
+    fetch("/api/admin")
       .then((res) => res.json())
       .then(setData);
   }, []);
@@ -29,7 +29,7 @@ export default function CustomerPage() {
           <Users className="h-5 w-5 text-[#F97316]" />
           <CardTitle>Daftar Pelanggan</CardTitle>
         </CardHeader>
-        <CustomerPage />
+        <AdminPage />
       </Card>
     </div>
   );

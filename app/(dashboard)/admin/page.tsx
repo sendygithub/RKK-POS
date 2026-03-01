@@ -26,47 +26,102 @@ type UserRow = {
   role: string;
 };
 
-const MOCK_USERS: UserRow[] = [
-  { id: "1", name: "Admin", email: "admin@pawsome.com", role: "admin" },
-  { id: "2", name: "Staff", email: "staff@pawsome.com", role: "staff" },
-  { id: "3", name: "Kasir", email: "kasir@pawsome.com", role: "cashier" },
-];
+const initialFormState = {
+  name: "",
+  role: "",
+  email: "",
+  password: "",
+};
 
 export default function AdminPage() {
   const { isAdmin, isLoggedIn } = useAuth();
   const router = useRouter();
-  const [users, setUsers] = useState<UserRow[]>(MOCK_USERS);
   const [showAdd, setShowAdd] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [newRole, setNewRole] = useState<"admin" | "staff" | "cashier">("staff");
+  const [name, setname] = useState("");
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const [role, setrole] = useState<"admin" | "staff" | "cashier">("staff");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [admin, setAdmin] = useState<AdminRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  type AdminRow = {
+    id: number;
+    name: string;
+    email: string;
+    password: string | null;
+    role: string;
+  };
   useEffect(() => {
     if (isLoggedIn && !isAdmin) {
       router.replace("/");
     }
   }, [isAdmin, isLoggedIn, router]);
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!newName.trim() || !newEmail.trim() || !newPassword.trim()) return;
-    setUsers((prev) => [
-      ...prev,
-      {
-        id: String(prev.length + 1),
-        name: newName.trim(),
-        email: newEmail.trim(),
-        role: newRole,
-      },
-    ]);
-    setNewName("");
-    setNewEmail("");
-    setNewPassword("");
-    setNewRole("staff");
-    setShowAdd(false);
-  };
+    setIsSubmitting(true);
 
+    // Bungkus data dari state individu ke dalam satu objek
+    const payload = {
+      name,
+      email,
+      password,
+      role,
+    };
+
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload), // Gunakan payload, bukan formData
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        // Perhatikan: result.error atau result.message?
+        // Sesuaikan dengan API yang kita buat tadi (menggunakan result.error)
+        alert(`Gagal: ${result.error || result.message}`);
+        return;
+      }
+
+      alert("Berhasil menyimpan data!");
+      setShowAdd(false);
+      window.location.reload(); // Refresh untuk melihat data baru
+    } catch (error) {
+      console.error("Gagal menyambung ke server:", error);
+      alert("Terjadi kesalahan koneksi");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  // Ambil data dari API saat komponen dimuat
+  useEffect(() => {
+    fetchAdmin();
+  }, []);
+
+  const fetchAdmin = async () => {
+    try {
+      const res = await fetch("/api/admin");
+      const data = await res.json();
+
+      // DEBUG: Tambahkan log ini untuk melihat struktur data asli dari database
+      console.log("Data dari API:", data);
+
+      // Pastikan data yang masuk ke state adalah array
+      if (Array.isArray(data)) {
+        setAdmin(data);
+      } else if (data.admins) {
+        // Jika API membungkusnya dalam properti 'admins'
+        setAdmin(data.admins);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   if (!isLoggedIn) return null;
   if (!isAdmin) return null;
 
@@ -81,10 +136,7 @@ export default function AdminPage() {
             Kelola pengguna
           </p>
         </div>
-        <Button
-          className="gap-2 rounded-xl"
-          onClick={() => setShowAdd(true)}
-        >
+        <Button className="gap-2 rounded-xl" onClick={() => setShowAdd(true)}>
           <UserPlus className="h-4 w-4" />
           Tambah User
         </Button>
@@ -102,31 +154,28 @@ export default function AdminPage() {
                 <TableHead>Nama</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell className="font-medium">{u.name}</TableCell>
-                  <TableCell className="text-[hsl(var(--muted-foreground))]">
-                    {u.email}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        u.role === "admin"
-                          ? "default"
-                          : u.role === "staff"
-                          ? "secondary"
-                          : "outline"
-                      }
-                      className="rounded-full"
-                    >
-                      {u.role}
-                    </Badge>
+              {admin.length > 0 ? (
+                admin.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.name}</TableCell>
+                    <TableCell>{item.email}</TableCell>
+                    <TableCell>{item.role}</TableCell>
+                    <TableCell>
+                      <Button>edit</Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-4">
+                    {loading ? "Sedang memuat..." : "Tidak ada data admin."}
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
@@ -150,15 +199,15 @@ export default function AdminPage() {
               </Button>
             </CardHeader>
             <CardContent className="pt-6">
-              <form onSubmit={handleAddUser} className="space-y-4">
+              <form onSubmit={handleAddAdmin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="add-name">Nama</Label>
                   <div className="relative">
                     <Input
-                      id="add-name"
+                      id="name"
                       placeholder="Nama lengkap"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
+                      value={name}
+                      onChange={(e) => setname(e.target.value)}
                       className="rounded-xl pl-9"
                       required
                     />
@@ -166,15 +215,15 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="add-email">Email</Label>
+                  <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
                     <Input
-                      id="add-email"
+                      id="email"
                       type="email"
                       placeholder="email@contoh.com"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
+                      value={email}
+                      onChange={(e) => setemail(e.target.value)}
                       className="rounded-xl pl-9"
                       required
                     />
@@ -185,11 +234,11 @@ export default function AdminPage() {
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
                     <Input
-                      id="add-password"
+                      id="password"
                       type="password"
                       placeholder="••••••••"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
+                      value={password}
+                      onChange={(e) => setpassword(e.target.value)}
                       className="rounded-xl pl-9"
                       required
                     />
@@ -198,9 +247,9 @@ export default function AdminPage() {
                 <div className="space-y-2">
                   <Label>Role</Label>
                   <select
-                    value={newRole}
+                    value={role}
                     onChange={(e) =>
-                      setNewRole(e.target.value as "admin" | "staff" | "cashier")
+                      setrole(e.target.value as "admin" | "staff" | "cashier")
                     }
                     className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
                   >

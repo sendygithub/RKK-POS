@@ -26,10 +26,41 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export const dynamic = "force-dynamic";
+// Inisialisasi data kosong untuk reset form
+const initialFormState = {
+  namaPemilik: "",
+  namaHewan: "",
+  ras: "",
+  layanan: "",
+  date: "",
+  time: "",
+  telfon: "",
+  alamat: "",
+  status: "",
+  customerId: "",
+};
+
+type Appointment = {
+  namaPemilik: string;
+  namaHewan: string;
+  ras: string;
+  layanan: string;
+  date: string;
+  time: string;
+  telfon: string;
+  alamat: string;
+  status: string;
+  customerId: string;
+  id?: number;
+};
 
 export default function AppointmentGrid() {
   const [data, setData] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
+  const [formData, setFormData] = useState(initialFormState);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     fetch("/api/appointments")
@@ -49,7 +80,22 @@ export default function AppointmentGrid() {
     }
   };
 
-  const handleEditOpen = () => {
+  const handleEditOpen = (appointment: Appointment) => {
+    if (appointment.id !== undefined) {
+      setSelectedAppointmentId(appointment.id);
+    }
+    setFormData({
+      namaPemilik: appointment.namaPemilik,
+      namaHewan: appointment.namaHewan,
+      ras: appointment.ras,
+      layanan: appointment.layanan,
+      date: appointment.date,
+      time: appointment.time,
+      telfon: appointment.telfon,
+      alamat: appointment.alamat,
+      status: appointment.status,
+      customerId: appointment.customerId,
+    });
     setShowEdit(true); // Buka modal edit
   };
 
@@ -57,18 +103,34 @@ export default function AppointmentGrid() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await fetch("/api/appointments", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        id: Number(selectedAppointmentId),
+        ...formData,
+      }),
     });
 
     if (res.ok) {
-      setShowEdit(reset);
-      setTampil(false);
       window.location.reload();
     }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { id, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+
+      [id]: value,
+    }));
+    console.log(id, value);
   };
 
   return (
@@ -155,7 +217,7 @@ export default function AppointmentGrid() {
                 variant="outline"
                 size="sm"
                 className="h-9 rounded-xl border-[#F97316]/20 text-[#F97316] hover:bg-[#F97316] hover:text-white transition-all gap-2"
-                onClick={() => handleEditOpen()}
+                onClick={() => handleEditOpen(x)}
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 <span className="text-xs font-bold uppercase tracking-tight">
@@ -173,7 +235,7 @@ export default function AppointmentGrid() {
             <CardHeader className="flex flex-row items-center justify-between border-b border-[hsl(var(--border))]">
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-[#F97316]" />
-                Buat Janji Baru
+                Reschedule janji
               </CardTitle>
               <Button
                 variant="ghost"

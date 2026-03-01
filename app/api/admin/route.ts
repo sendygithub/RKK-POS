@@ -133,7 +133,7 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
-        // role: true, // Buka ini jika kamu sudah menambahkannya di schema.prisma
+        role: true,
         createdAt: true,
       },
       orderBy: {

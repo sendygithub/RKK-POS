@@ -7,25 +7,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
-function LoginForm() {
+function RegisterForm() {
   const [email, setEmail] = useState("");
+  const [nama, setNama] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/", // Halaman tujuan setelah login sukses
-    });
+    setError(""); // Reset error
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nama, email, password }),
+      });
+
+      if (res.ok) {
+        // Jika berhasil daftar, langsung arahkan ke login atau otomatis login
+        router.push("/login?success=Account created");
+      } else {
+        const data = await res.json();
+        setError(data.message || "Gagal mendaftar");
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan koneksi");
+    }
   };
 
   return (
@@ -39,7 +54,7 @@ function LoginForm() {
             Paw-some Retail
           </CardTitle>
           <p className="text-sm text-[hsl(var(--muted-foreground))]">
-            Masuk ke dashboard
+            Silahkan Registrasi Terlebih Dahulu
           </p>
         </CardHeader>
         <CardContent>
@@ -50,13 +65,28 @@ function LoginForm() {
               </p>
             )}
             <div className="space-y-2">
+              <Label htmlFor="nama">Nama</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
+                <Input
+                  id="name"
+                  type="name"
+                  placeholder="Nama Lengkap"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  className="rounded-xl pl-9"
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@pawsome.com"
+                  placeholder="email@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="rounded-xl pl-9"
@@ -84,8 +114,10 @@ function LoginForm() {
             </Button>
           </form>
           <p className="mt-4 text-center text-xs text-[hsl(var(--muted-foreground))]">
-            Demo: admin@pawsome.com / admin123 (admin) atau staff@pawsome.com /
-            staff123 (staff)
+            sudah punya akun ?
+          </p>
+          <p className="mt-4 text-center text-xs text-[hsl(var(--muted-foreground))]">
+            <Link href={"/login"}>Login</Link>
           </p>
         </CardContent>
       </Card>
@@ -102,7 +134,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginForm />
+      <RegisterForm />
     </Suspense>
   );
 }

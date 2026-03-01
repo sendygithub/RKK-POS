@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { HeaderDateTime } from "@/components/layout/header-datetime";
-import { useAuth } from "@/lib/auth-context";
 
 const PUBLIC_PATHS = ["/login"];
 
@@ -15,22 +14,8 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
-
-  useEffect(() => {
-    if (!isPublic && !isLoggedIn) {
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-    }
-  }, [isLoggedIn, isPublic, pathname, router]);
-
-  if (!isPublic && !isLoggedIn) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FDF8F3]">
-        <p className="text-[hsl(var(--muted-foreground))]">Memuat...</p>
-      </div>
-    );
-  }
 
   if (isPublic) {
     return <>{children}</>;

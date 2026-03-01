@@ -3,8 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Clock, LogOut } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
+import { useSession, signOut } from "next-auth/react"; // Import dari NextAuth
+import type { Session } from "next-auth";
+
+declare module "next-auth" {
+  interface User {
+    id?: string;
+    name?: string;
+    email?: string;
+  }
+}
 
 function formatDate(d: Date) {
   return d.toLocaleDateString("id-ID", {
@@ -24,16 +33,14 @@ function formatTime(d: Date) {
 }
 
 export function HeaderDateTime() {
-  const { user, logout } = useAuth();
   const router = useRouter();
   const [dateTime, setDateTime] = useState<Date>(new Date());
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const t = setInterval(() => setDateTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
-
-  if (!user) return null;
 
   return (
     <header className="glass sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-[var(--glass-border)] px-4 lg:px-8">
@@ -50,14 +57,22 @@ export function HeaderDateTime() {
           </span>
         </div>
         <span className="hidden text-xs text-[hsl(var(--muted-foreground))] sm:inline">
-          {user.name}
+          <span>
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] uppercase tracking-wider">
+              {session?.user?.role || "Staff"}
+            </p>
+          </span>
         </span>
+
+        <p className="text-[10px] text-[hsl(var(--muted-foreground))] uppercase tracking-wider">
+          {status === "loading" ? "Loading..." : session?.user?.name || "Admin"}
+        </p>
         <Button
           variant="ghost"
           size="sm"
           className="gap-2 rounded-xl text-[hsl(var(--muted-foreground))]"
           onClick={() => {
-            logout();
+            signOut();
             router.push("/login");
           }}
         >

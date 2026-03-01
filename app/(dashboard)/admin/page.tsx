@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Shield, UserPlus, Users, Mail, Lock, X } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,6 @@ const initialFormState = {
 };
 
 export default function AdminPage() {
-  const { isAdmin, isLoggedIn } = useAuth();
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
   const [name, setname] = useState("");
@@ -52,11 +50,6 @@ export default function AdminPage() {
     password: string | null;
     role: string;
   };
-  useEffect(() => {
-    if (isLoggedIn && !isAdmin) {
-      router.replace("/");
-    }
-  }, [isAdmin, isLoggedIn, router]);
 
   const handleAddAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -122,8 +115,6 @@ export default function AdminPage() {
       setLoading(false);
     }
   };
-  if (!isLoggedIn) return null;
-  if (!isAdmin) return null;
 
   return (
     <div>

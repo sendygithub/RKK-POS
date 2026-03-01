@@ -15,7 +15,6 @@ import {
   Shield,
   UserCog,
 } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -31,7 +30,6 @@ const navItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAdmin } = useAuth();
 
   return (
     <>
@@ -99,21 +97,6 @@ export function AppSidebar() {
                 </Link>
               );
             })}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                  pathname === "/admin"
-                    ? "bg-[#F97316]/10 text-[#F97316]"
-                    : "text-[#1F2937]/80 hover:bg-white/60 hover:text-[#1F2937]",
-                )}
-              >
-                <Shield className="h-5 w-5 shrink-0" />
-                Admin
-              </Link>
-            )}
           </nav>
           <div className="border-t border-[var(--glass-border)] p-4">
             <p className="text-xs text-[hsl(var(--muted-foreground))]">
